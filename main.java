@@ -7,6 +7,8 @@ import java.util.Scanner;
 public class Main {
   
   
+  //APLIQUE SINGLETON, REMOVA ESSA DECLARACAO E USO GetInstance nos métodos que chamam db
+  
   static int opcao;
   static Scanner entrada;
   //static Nota nota;
