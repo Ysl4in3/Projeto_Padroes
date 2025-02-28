@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 public class Main {
   
-  
+
   //APLIQUE SINGLETON, REMOVA ESSA DECLARACAO E USO GetInstance nos métodos que chamam db
   static DataBase db;
   static int opcao;
@@ -13,21 +13,53 @@ public class Main {
   //static Nota nota;
 
   public static void main(String[] args) {
-    //REMOVA 
-    db = new DataBase(); 
-    entrada = new Scanner(System.in);
-    
-    //FACA UM MENU PARA SELECIONAR A OPCAO (1 - Prof/ 2- Coord) USANDO A SENHA EM PROFESSOR
-    //MENU
-    menuCoordenador();
 
-    //menuProfessor();
-   
+    menuPrincipal();
+    
+
     entrada.close();
   }
 
-public static void menuCoordenador(){
-  do { 
+  public static void menuPrincipal(){
+    do { 
+      System.out.println("╔═════════════════════════════════════════╗");
+      System.out.println("║                MENU                     ║");
+      System.out.println("╠═════════════════════════════════════════╣");
+      System.out.println("║       1 - Menu Coordenador              ║");
+      System.out.println("║        2 - Menu Professor               ║");
+      System.out.println("╚═════════════════════════════════════════╝");
+      System.out.print("Opção: ");
+      opcao = entrada.nextInt(); 
+  
+      switch (opcao) {
+        
+        case 1:
+          menuCoordenador();
+          break;
+        case 2:
+          menuProfessor();
+          break;
+          default:
+            System.out.println("Opção inválida!");
+        }
+      } while (opcao != 0);
+  
+  }  
+    
+  public static void menuCoordenador(){
+      DataBase db = DataBase.getInstance();
+      
+      System.out.println("Insira a Senha de Coordenador");
+      System.out.print("Senha: ");
+      opcao = entrada.nextInt(); 
+      if (opcao == db.getSenhaCoordenador()){
+          System.out.println("Senha Correta, Seja Bem vindo");
+          System.out.println("");
+          System.out.println("");
+          System.out.println("");
+      } else menuCoordenador();
+      
+      do { 
     System.out.println("╔═════════════════════════════════════════╗");
     System.out.println("║                MENU                     ║");
     System.out.println("╠═════════════════════════════════════════╣");
@@ -43,6 +75,8 @@ public static void menuCoordenador(){
     System.out.println("║      10 - Lista de recuperação          ║");
     System.out.println("║          11 - Lista geral               ║");
     System.out.println("║           12 - Histórico                ║");
+    System.out.println("║  13 - Exportar Dados do Estudante       ║");
+    System.out.println("║           14 - Histórico                ║");
     System.out.println("║             0 - Sair                    ║");
     System.out.println("╚═════════════════════════════════════════╝");
     System.out.print("Opção: ");
@@ -85,6 +119,12 @@ public static void menuCoordenador(){
       case 12:
         exibirHistorico();
         break;
+        case 13:
+        exportarDadosEstudante();
+        break;
+      case 14:
+        importDadosEstudanteMEC();
+        break;
       case 0:
           System.out.println("Saindo...");
           break;
@@ -94,9 +134,19 @@ public static void menuCoordenador(){
     } while (opcao != 0);
 
 }
-
-
 public static void menuProfessor(){
+  DataBase db = DataBase.getInstance();
+  
+  System.out.println("Insira a Senha de Professor");
+  System.out.print("Senha: ");
+  opcao = entrada.nextInt(); 
+  if (opcao == db.getSenhaProfessor()){
+      System.out.println("Senha Correta, Seja Bem vindo");
+      System.out.println("");
+      System.out.println("");
+      System.out.println("");
+  } else menuProfessor();  
+  
   do { 
     System.out.println("╔═════════════════════════════════════════╗");
     System.out.println("║                MENU                     ║");
@@ -284,8 +334,7 @@ public static void exibirHistorico(){
 
 
 public static void cadastrarProfessor(){
-  //ADICIONE EM TODOS OS MÉTODOS QUE USAM db
- //DataBase db = DataBase.getInstace();
+  DataBase db = DataBase.getInstace();
 
   System.out.println(" ---- Cadastrar Professor ----");
   Professor professor = new Professor();
@@ -311,6 +360,7 @@ public static void cadastrarProfessor(){
 }
 
 public static void vincularProfessorTurma(){
+  DataBase db = DataBase.getInstace();
 
   System.out.println(" ---- Vincular Professor a Turma ----");
   System.out.println("Escolha o professor para vincular:");
@@ -349,6 +399,7 @@ public static void vincularProfessorTurma(){
 
 
 public static void cadastrarCurso() {
+  DataBase db = DataBase.getInstance();
 
   System.out.println(" ---- Cadastrar Curso ----");
   Curso curso = new Curso();
@@ -363,6 +414,7 @@ public static void cadastrarCurso() {
 }
 
 public static void cadastrarAluno() {
+  DataBase db = DataBase.getInstace();
 
   System.out.println(" ---- Cadastrar Aluno ----");
   Aluno aluno = new Aluno();
@@ -388,6 +440,7 @@ public static void cadastrarAluno() {
 }
 
 public static void vincularEstudanteTurma(){
+  DataBase db = DataBase.getInstace();
 
   System.out.println(" ---- Vincular Estudante a Turma ----");
   System.out.println("Escolha o estudante para vincular:");
@@ -424,6 +477,8 @@ public static void vincularEstudanteTurma(){
 }
 
 public static void cadastrarTurma(){ 
+  DataBase db = DataBase.getInstace();
+
   System.out.println(" ---- Cadastrar Turma ----");
   Turma turma = new Turma();
 
@@ -447,6 +502,36 @@ public static void cadastrarTurma(){
   turma.setCurso( db.getCursos().get(escolhaCurso));
 
   System.out.println("Turma cadastrada com sucesso!");
+}
+
+public static String exportarDadosEstudante(){
+  DataBase db = DataBase.getInstance();
+  ArrayList<String[]> data = new ArrayList<String[]>();
+ 
+  ExportData exp = new ExportData();
+  ArrayList<Aluno> alunos = db.getAlunos();
+  for(int i = 0; i < alunos.size(); i++){
+    String[] sm = {"matricula", "alunos.get(i).getMatricula()"};
+    String[] sn = {"nome", alunos.get(i).getNome()};
+    String[] sc ={"cpf", alunos.get(i).getCpf()};
+    String[] st = {"telefone", alunos.get(i).getTelefone()};
+    String[] se =  {"endereco",alunos.get(i).getEndereco()};
+    data.add(sm);
+    data.add(sn);
+    data.add(sc);
+    data.add(st);
+    data.add(se);
+
+
+  }
+  return exp.ArrayToXMLFormat(data, 5 , "student");
+}
+
+
+public static void importDadosEstudanteMEC(){
+   String data = exportarDadosEstudante();
+   ImportDataMEC imec = new ImportDataMEC();
+   imec.importData(data);
 }
 
 }
